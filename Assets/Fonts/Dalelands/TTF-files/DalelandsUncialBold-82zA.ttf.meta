@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: d337bc969c84a594fa8e9628e3925173
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Dalelands Uncial
+  fontNames:
+  - Dalelands Uncial
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 5315d5a64078f814884a32ba771ad087, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
