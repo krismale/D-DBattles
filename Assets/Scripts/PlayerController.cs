@@ -11,13 +11,13 @@ public class PlayerController : MonoBehaviour
     public float ActorDistance = 30;
     public float ActorMaxDistance = 30;
     public string ActorName = "NoName";
-    public int Stage = 0;
-    
+
+    private TurnManager TurnManager;
+    private UIManager UIManager;
+    private MouseManager MouseManager;
 
     private Animator anim;
     private NavMeshAgent agent;
-    private TurnManager TurnManager;
-    private UIManager UIManager;
     private ParticleSystem ActivePlayerHighlighter;
 
     public int ClassID; // Brukes til å finne riktig prefab når man skal lage en ny Actor
@@ -31,19 +31,12 @@ public class PlayerController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         TurnManager = GameObject.FindGameObjectWithTag("TurnManager").GetComponent<TurnManager>();
         UIManager = GameObject.FindGameObjectWithTag("UICanvas").GetComponent<UIManager>();
+        MouseManager = GameObject.FindGameObjectWithTag("MouseManager").GetComponent<MouseManager>();
         ActivePlayerHighlighter = gameObject.GetComponentInChildren<ParticleSystem>();
 
         ActorHealth = ActorMaxHealth; // Gir ActorHealth maksverdien av det livet karakteren har
         ResetActorDistance();
         SetPreviousPos(); // Setter PreviousPos til den posisjonen aktøren spawner på
-    }
-
-    void Start()
-    {
-        if(Initiative == 0)
-        {
-            ActivateActor();
-        }
     }
 
     void Update()
@@ -62,13 +55,9 @@ public class PlayerController : MonoBehaviour
         if (ActorHealth <= 0)
         {
             gameObject.tag = "Untagged";
-            if (TurnManager.FindActiveActor() == gameObject)
+            if (MouseManager.targetToPlace == gameObject)
             {
-                // Setter turen til neste aktør dersom det er denne aktørens tur
-                TurnManager.IncrementPlayerTurn();
-            } else
-            {
-                TurnManager.FindHighestInitiative();
+                MouseManager.targetToPlace = null;
             }
             Destroy(gameObject);
             

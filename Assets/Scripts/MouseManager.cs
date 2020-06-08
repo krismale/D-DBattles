@@ -26,7 +26,7 @@ public class MouseManager : MonoBehaviour
     private Color32 targetFontColor = new Color32(255, 255, 255, 255);
     private Color32 normalFontColor = new Color32(171, 171, 171, 255);
 
-    private GameObject targetToPlace;
+    public GameObject targetToPlace;
 
 
     void Start()
@@ -131,42 +131,57 @@ public class MouseManager : MonoBehaviour
         {
             Cursor.SetCursor(targetCursor, new Vector2(16, 16), CursorMode.Auto);
             actorHit = true;
-        } else if(hit.collider.gameObject.tag == "Wall")
+        }
+        else if (hit.collider.gameObject.tag == "Wall")
         {
             Cursor.SetCursor(notAllowedCursor, new Vector2(16, 16), CursorMode.Auto);
             cannotMove = true;
+        }
+        else if (targetToPlace)
+        {
+            Cursor.SetCursor(moveToCursor, new Vector2(16, 16), CursorMode.Auto);
+            actorHit = false;
         }
         else
         {
             actorHit = false;
             // Sets the cursor to show that you can click on an object
-            Cursor.SetCursor(moveToCursor, new Vector2(16, 16), CursorMode.Auto);
+            Cursor.SetCursor(pointer, Vector2.zero, CursorMode.Auto);
         }
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            // Kan ikke spilleren bevege seg så hopper vi tidlig ut av funksjonen her
-            if(cannotMove)
-            {
-                return;
-            }
-
-            if (actorHit)
-            {
-                Transform itemTransform = hit.collider.gameObject.transform;
-                OnClickEnvironment.Invoke(itemTransform.position);
-                Debug.Log("ACTOR");
-            }
-            else
-            {
-                OnClickEnvironment.Invoke(hit.point);
-            }
-        }
-        else if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1))
         {
             TurnManager.UpdateActorArray();
             if (actorHit)
             {
+                if (targetToPlace)
+                {
+                    targetToPlace.GetComponent<PlayerController>().DeactivateActor();
+                }
+                targetToPlace = hit.collider.gameObject;
+                for (int i = 0; i < TurnManager.Actors.Length; ++i)
+                {
+                    if (TurnManager.Actors[i] == targetToPlace)
+                    {
+                        targetToPlace.GetComponent<PlayerController>().ActivateActor();
+                        TurnManager.PopulateUI(targetToPlace);
+                    }
+                }
+            }
+            else
+            {
+                //Kan ikke spilleren bevege seg til det oppgitte punktet så hopper vi tidlig ut av funksjonen her
+                if (cannotMove || !targetToPlace)
+                {
+                    return;
+                }
+                OnClickEnvironment.Invoke(hit.point);
+            }
+        }
+        else if (Input.GetMouseButtonDown(0))
+        {
+            if (actorHit)
+            {
+                TurnManager.UpdateActorArray();
                 for (int i = 0; i < TurnManager.Actors.Length; ++i)
                 {
                     if (TurnManager.Actors[i] == hit.collider.gameObject)
@@ -178,7 +193,12 @@ public class MouseManager : MonoBehaviour
                         TurnManager.Actors[i].GetComponentInChildren<TMPro.TextMeshPro>().color = normalFontColor;
                     }
                 }
-                float distToActor = (hit.collider.gameObject.transform.position - TurnManager.FindActiveActor().transform.position).magnitude;
+                float distToActor = 0;
+                if (targetToPlace)
+                {
+                    distToActor = (hit.collider.gameObject.transform.position - targetToPlace.transform.position).magnitude;
+                }
+                
                 UIManager.SetUITargetDistance(distToActor);
                 UIManager.SetUITargetName(hit.collider.gameObject.GetComponent<PlayerController>());
                 UIManager.SetUITargetHealth(hit.collider.gameObject.GetComponent<PlayerController>());
@@ -188,14 +208,13 @@ public class MouseManager : MonoBehaviour
 
     void ActorMoveTo(Vector3 MoveTo)
     {
-        GameObject ActorToMove = TurnManager.FindActiveActor();
-        if((MoveTo - ActorToMove.transform.position).magnitude > ActorToMove.GetComponent<PlayerController>().ActorDistance)
+        if((MoveTo - targetToPlace.transform.position).magnitude > targetToPlace.GetComponent<PlayerController>().ActorDistance)
         {
-            Debug.Log((MoveTo - ActorToMove.transform.position).magnitude + ": Out of reach");
+            Debug.Log((MoveTo - targetToPlace.transform.position).magnitude + ": Out of reach");
             return;
         }
 
-        ActorToMove.GetComponent<NavMeshAgent>().destination = MoveTo;
+        targetToPlace.GetComponent<NavMeshAgent>().destination = MoveTo;
     }
 
 }

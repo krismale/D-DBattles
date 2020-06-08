@@ -12,7 +12,6 @@ public class ActorProfileManager : MonoBehaviour
 
     public TMPro.TextMeshProUGUI ActorNameText;
     public TMPro.TextMeshProUGUI ActorClassText;
-    public TMPro.TextMeshProUGUI ActorStageIDText;
 
 
     // Start is called before the first frame update
@@ -61,8 +60,6 @@ public class ActorProfileManager : MonoBehaviour
             {
                 ActorClassText.text = "NoClass";
             }
-
-            ActorStageIDText.text = "Stage: " + actor.GetComponent<PlayerController>().Stage;
         }
     }
 

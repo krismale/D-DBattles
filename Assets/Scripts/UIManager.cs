@@ -19,8 +19,6 @@ public class UIManager : MonoBehaviour
     private Slider UITargetHealthSlider;
     private TMPro.TextMeshProUGUI UITargetDistance;
 
-    public Button UIEndTurnButton;
-
     private PlayerController TargetActorController;
     // Slutt på PlayMode UI elementer
 
@@ -85,8 +83,6 @@ public class UIManager : MonoBehaviour
         UITargetHealthSlider.onValueChanged.AddListener(EditTargetHealth); // Sørger for at slideren påvirker livet til target
         UITargetDistance = GameObject.FindGameObjectWithTag("UITargetDistance").GetComponent<TMPro.TextMeshProUGUI>();
 
-        UIEndTurnButton = GameObject.FindGameObjectWithTag("UIEndTurn").GetComponent<Button>();
-
         EnablePlayModeUI(false);
     }
 
@@ -94,11 +90,6 @@ public class UIManager : MonoBehaviour
     void Update()
     {
         
-    }
-
-    public void SetUIEndTurnActive(bool active)
-    {
-        UIEndTurnButton.interactable = active;
     }
 
     public void SetUIActorName(PlayerController nextActor)
@@ -129,12 +120,15 @@ public class UIManager : MonoBehaviour
 
     public void EditTargetHealth(float newHealth)
     {
-        UITargetHealth.text = newHealth.ToString();
-        TargetActorController.ActorHealth = (int)Mathf.Round(newHealth);
-
-        if(newHealth == 0)
+        if(TargetActorController)
         {
-            UITargetName.text = "Target: " + TargetActorController.ActorName + " (Dead)";
+            UITargetHealth.text = newHealth.ToString();
+            TargetActorController.ActorHealth = (int)Mathf.Round(newHealth);
+
+            if (newHealth == 0)
+            {
+                UITargetName.text = "Target: " + TargetActorController.ActorName + " (Dead)";
+            }
         }
     }
 
@@ -267,8 +261,6 @@ public class UIManager : MonoBehaviour
         {
             UIPlayModeBackgrounds[i].SetActive(enable);
         }
-
-        UIEndTurnButton.gameObject.SetActive(enable);
     }
 
     // Når en profil får en ny klasse, så oppdateres profilbilde på alle profilene
