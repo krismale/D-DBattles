@@ -38,11 +38,14 @@ public class UIManager : MonoBehaviour
     private List<GameObject> UIExistingPlaceActorProfiles = new List<GameObject>(); // Henviser til alle profilene som allerede er laget, for å unngå duplikater
     // Slutt på PlaceActorMode UI elementer
 
-    // Start på PauseMenu UI elementer
+    // Start på PauseMenu og SettingsMenu UI elementer
     public GameObject UIPauseMenu;
     public TMPro.TMP_Dropdown UIChooseModeDropdown;
     public TMPro.TMP_Dropdown UIChooseStageDropdown;
-    // Slutt på PauseMenu UI elementer
+    public GameObject UISettingsMenu;
+    public TMPro.TextMeshProUGUI UIZoomSensitivityValue;
+    public TMPro.TextMeshProUGUI UICameraMovementValue;
+    // Slutt på PauseMenu og SettingsMenu UI elementer
 
 
     // Start is called before the first frame update
@@ -102,20 +105,53 @@ public class UIManager : MonoBehaviour
         UIActorHealth.text = "Actor Health: " + nextActor.ActorHealth + "/" + nextActor.ActorMaxHealth;
     }
 
+    public void SetUIActorReach(float reach)
+    {
+        UIActorReach.text = "Reach: " + Mathf.Round(reach);
+    }
+
     public void SetUITargetName(PlayerController targetActor)
     {
         if(TargetActorController != targetActor)
         {
             TargetActorController = targetActor;
         }
-        UITargetName.text = "Target: " + targetActor.ActorName;
+        if(targetActor)
+        {
+            UITargetName.text = "Target: " + targetActor.ActorName;
+        } else
+        {
+            UITargetName.text = "Target: ";
+        }
+        
     }
 
     public void SetUITargetHealth(PlayerController targetActor)
     {
-        UITargetHealthSlider.maxValue = targetActor.ActorMaxHealth;
-        UITargetHealthSlider.value = targetActor.ActorHealth;
-        UITargetHealth.text = UITargetHealthSlider.value.ToString();
+        if(targetActor)
+        {
+            UITargetHealthSlider.enabled = true;
+            UITargetHealthSlider.maxValue = targetActor.ActorMaxHealth;
+            UITargetHealthSlider.value = targetActor.ActorHealth;
+            UITargetHealth.text = UITargetHealthSlider.value.ToString();
+        } else
+        {
+            UITargetHealthSlider.enabled = false;
+            UITargetHealth.text = "N/A";
+        }
+        
+    }
+
+    public void SetUITargetDistance(float distance, bool hasTarget = true)
+    {
+        if(hasTarget)
+        {
+            UITargetDistance.text = "Distance: " + Mathf.Round(distance);
+        } else
+        {
+            UITargetDistance.text = "Distance: ";
+        }
+        
     }
 
     public void EditTargetHealth(float newHealth)
@@ -130,16 +166,6 @@ public class UIManager : MonoBehaviour
                 UITargetName.text = "Target: " + TargetActorController.ActorName + " (Dead)";
             }
         }
-    }
-
-    public void SetUITargetDistance(float distance)
-    {
-        UITargetDistance.text = "Distance: " + Mathf.Round(distance);
-    }
-
-    public void SetUIActorReach(float reach)
-    {
-        UIActorReach.text = "Reach: " + Mathf.Round(reach);
     }
 
     public void CreateNewActorProfile()
@@ -230,6 +256,10 @@ public class UIManager : MonoBehaviour
         EnablePlaceActorModeUI(false); 
         EnablePlayModeUI(true);
         UIGameMode.text = "Game Mode: Play";
+
+        SetUITargetDistance(0, false);
+        SetUITargetName(null);
+        SetUITargetHealth(null);
     }
 
     public void TogglePauseModeUI(bool enable, int mode)
@@ -239,6 +269,11 @@ public class UIManager : MonoBehaviour
         if(enable)
         {
             UIChooseModeDropdown.value = mode;
+        }
+
+        if(UISettingsMenu.activeInHierarchy)
+        {
+            ToggleSettingsMenu();
         }
 
     }
@@ -316,18 +351,46 @@ public class UIManager : MonoBehaviour
     }
 
     // Deselecter alle profilene i PlaceActorMode. Etterfølges av et SelectProfile()-kall i MouseManager
-    public void FindConnectedProfile(GameObject selectedActor)
+    public GameObject FindConnectedProfile(GameObject selectedActor)
     {
         foreach (GameObject item in UIExistingPlaceActorProfiles)
         {
             if(item.GetComponent<ActorProfileManager>().ConnectedActor == selectedActor)
             {
                 item.GetComponent<ActorProfileManager>().SelectProfile();
+                return item;
             } else
             {
                 item.GetComponent<ActorProfileManager>().DeselectProfile();
             }
             
         }
+        return null;
+    }
+
+    public void ToggleSettingsMenu()
+    {
+        if(UISettingsMenu.activeInHierarchy)
+        {
+            UISettingsMenu.SetActive(false);
+        } else
+        {
+            UISettingsMenu.SetActive(true);
+        }
+    }
+    public void SetUIZoomSensitivityValue(float newValue)
+    {
+        UIZoomSensitivityValue.text = roundFloatWithDecimals(newValue).ToString();
+    }
+    public void SetUICameraMovementValue(float newValue)
+    {
+        UICameraMovementValue.text = roundFloatWithDecimals(newValue).ToString();
+    }
+    private float roundFloatWithDecimals(float value)
+    {
+        value *= 10;
+        value = Mathf.Round(value);
+        value /= 10;
+        return value;
     }
 }

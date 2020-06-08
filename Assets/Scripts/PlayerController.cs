@@ -117,4 +117,12 @@ public class PlayerController : MonoBehaviour
         ActorMaxDistance = reach;
         ActorDistance = reach;
     }
+
+    // Flytter på Actoren til en ny posisjon, samtidig som den oppdaterer PreviousPos
+    public void SafelyTransportActor(Vector3 newPos)
+    {
+        gameObject.transform.position = newPos;
+        PreviousPos = newPos;
+        GetComponent<NavMeshAgent>().destination = newPos;
+    }
 }

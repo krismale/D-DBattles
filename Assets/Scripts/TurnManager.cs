@@ -1,19 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.AI;
 
 public class TurnManager : MonoBehaviour
 {
-    public int PlayerTurn = 0;
-    private int HighestInitiative;
-
     public bool CreateActorMode = true;
     public bool PlaceActorMode = false;
     public bool IsPaused = false;
 
     private UIManager UIManager;
+    private MouseManager MouseManager;
 
     public GameObject[] Actors;
 
@@ -22,6 +18,7 @@ public class TurnManager : MonoBehaviour
     {
         UIManager = GameObject.FindGameObjectWithTag("UICanvas").GetComponent<UIManager>();
         UIManager.UIChooseModeDropdown.onValueChanged.AddListener(ChangeMode);
+        MouseManager = GameObject.FindGameObjectWithTag("MouseManager").GetComponent<MouseManager>();
     }
 
     void Update()
@@ -84,7 +81,7 @@ public class TurnManager : MonoBehaviour
     public void ChangeMode(int mode)
     {
         
-        if(mode == 0)
+        if (mode == 0)
         {
             CreateActorMode = true;
             PlaceActorMode = false;
@@ -102,6 +99,19 @@ public class TurnManager : MonoBehaviour
             CreateActorMode = false;
             PlaceActorMode = false;
             UIManager.StartPlayModeUI();
+        }
+        SetAllActorsDeselected();
+    }
+
+    // Sørger for at ingen sin nameplate er highlighted når en bytter til PlayMode
+    private void SetAllActorsDeselected()
+    {
+        for(int i = 0; i < Actors.Length; ++i)
+        {
+            Actors[i].GetComponentInChildren<TMPro.TextMeshPro>().color = MouseManager.normalFontColor;
+            Actors[i].GetComponent<PlayerController>().DeactivateActor();
+            MouseManager.targetToPlace = null;
+            MouseManager.targetToMove = null;
         }
     }
 }

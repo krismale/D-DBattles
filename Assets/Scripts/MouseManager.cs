@@ -23,10 +23,11 @@ public class MouseManager : MonoBehaviour
     public TurnManager TurnManager;
     public UIManager UIManager;
 
-    private Color32 targetFontColor = new Color32(255, 255, 255, 255);
-    private Color32 normalFontColor = new Color32(171, 171, 171, 255);
+    public Color32 targetFontColor = new Color32(255, 255, 255, 255);
+    public Color32 normalFontColor = new Color32(171, 171, 171, 255);
 
-    public GameObject targetToPlace;
+    public GameObject targetToPlace; // Brukes i PlaceActorMode
+    public GameObject targetToMove; // Brukes i PlayMode
 
 
     void Start()
@@ -60,7 +61,6 @@ public class MouseManager : MonoBehaviour
             {
                 ActiveGameLogic(hit);
             }
-            
         }
         else
         {
@@ -111,13 +111,14 @@ public class MouseManager : MonoBehaviour
             {
                 targetToPlace.GetComponentInChildren<TMPro.TextMeshPro>().color = normalFontColor;
                 targetToPlace = null;
+                UIManager.FindConnectedProfile(targetToPlace);
             }
         }
         else if (Input.GetMouseButtonDown(0))
         {
             if (targetToPlace)
             {
-                targetToPlace.transform.position = hit.point;
+                targetToPlace.GetComponent<PlayerController>().SafelyTransportActor(hit.point);
             }
 
         }
@@ -137,7 +138,7 @@ public class MouseManager : MonoBehaviour
             Cursor.SetCursor(notAllowedCursor, new Vector2(16, 16), CursorMode.Auto);
             cannotMove = true;
         }
-        else if (targetToPlace)
+        else if (targetToMove)
         {
             Cursor.SetCursor(moveToCursor, new Vector2(16, 16), CursorMode.Auto);
             actorHit = false;
@@ -153,24 +154,24 @@ public class MouseManager : MonoBehaviour
             TurnManager.UpdateActorArray();
             if (actorHit)
             {
-                if (targetToPlace)
+                if (targetToMove)
                 {
-                    targetToPlace.GetComponent<PlayerController>().DeactivateActor();
+                    targetToMove.GetComponent<PlayerController>().DeactivateActor();
                 }
-                targetToPlace = hit.collider.gameObject;
+                targetToMove = hit.collider.gameObject;
                 for (int i = 0; i < TurnManager.Actors.Length; ++i)
                 {
-                    if (TurnManager.Actors[i] == targetToPlace)
+                    if (TurnManager.Actors[i] == targetToMove)
                     {
-                        targetToPlace.GetComponent<PlayerController>().ActivateActor();
-                        TurnManager.PopulateUI(targetToPlace);
+                        targetToMove.GetComponent<PlayerController>().ActivateActor();
+                        TurnManager.PopulateUI(targetToMove);
                     }
                 }
             }
             else
             {
                 //Kan ikke spilleren bevege seg til det oppgitte punktet så hopper vi tidlig ut av funksjonen her
-                if (cannotMove || !targetToPlace)
+                if (cannotMove || !targetToMove)
                 {
                     return;
                 }
@@ -194,9 +195,9 @@ public class MouseManager : MonoBehaviour
                     }
                 }
                 float distToActor = 0;
-                if (targetToPlace)
+                if (targetToMove)
                 {
-                    distToActor = (hit.collider.gameObject.transform.position - targetToPlace.transform.position).magnitude;
+                    distToActor = (hit.collider.gameObject.transform.position - targetToMove.transform.position).magnitude;
                 }
                 
                 UIManager.SetUITargetDistance(distToActor);
@@ -208,13 +209,13 @@ public class MouseManager : MonoBehaviour
 
     void ActorMoveTo(Vector3 MoveTo)
     {
-        if((MoveTo - targetToPlace.transform.position).magnitude > targetToPlace.GetComponent<PlayerController>().ActorDistance)
+        if((MoveTo - targetToMove.transform.position).magnitude > targetToMove.GetComponent<PlayerController>().ActorDistance)
         {
-            Debug.Log((MoveTo - targetToPlace.transform.position).magnitude + ": Out of reach");
+            Debug.Log((MoveTo - targetToMove.transform.position).magnitude + ": Out of reach");
             return;
         }
 
-        targetToPlace.GetComponent<NavMeshAgent>().destination = MoveTo;
+        targetToMove.GetComponent<NavMeshAgent>().destination = MoveTo;
     }
 
 }
