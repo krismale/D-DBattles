@@ -9,6 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: a2d7f2e5e39cfd44fb769fb4ddadbe2b
   - enabled: 1
-    path: Assets/Scenes/Prototyping.unity
+    path: Assets/Scenes/CragmawHideout.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}

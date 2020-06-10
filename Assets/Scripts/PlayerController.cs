@@ -5,7 +5,6 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    public int Initiative = 0;
     public int ActorHealth = 8;
     public int ActorMaxHealth = 8;
     public float ActorDistance = 30;
@@ -108,12 +107,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void InstantiateActor(string name, int health, int initiative, float reach)
+    public void InstantiateActor(string name, int health, float reach)
     {
         ActorName = name;
         ActorMaxHealth = health;
         ActorHealth = health;
-        Initiative = initiative;
         ActorMaxDistance = reach;
         ActorDistance = reach;
     }

@@ -56,6 +56,18 @@ public class ActorProfileManager : MonoBehaviour
             {
                 ActorClassText.text = "Goblin";
             }
+            else if (actor.GetComponent<PlayerController>().ClassID == 3)
+            {
+                ActorClassText.text = "Knight";
+            }
+            else if (actor.GetComponent<PlayerController>().ClassID == 4)
+            {
+                ActorClassText.text = "Troll";
+            }
+            else if (actor.GetComponent<PlayerController>().ClassID == 5)
+            {
+                ActorClassText.text = "Paladin";
+            }
             else
             {
                 ActorClassText.text = "NoClass";

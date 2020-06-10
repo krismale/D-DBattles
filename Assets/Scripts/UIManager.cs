@@ -183,7 +183,6 @@ public class UIManager : MonoBehaviour
         {
             
             string actorName = "none";
-            int actorInit = 0;
             int actorHealth = 2;
             float actorReach = 0;
 
@@ -198,10 +197,6 @@ public class UIManager : MonoBehaviour
                 {
                     actorHealth = int.Parse(inputFields[j].text);
                 }
-                else if (inputFields[j].tag == "UIActorInitInput")
-                {
-                    actorInit = int.Parse(inputFields[j].text);
-                }
                 else if (inputFields[j].tag == "UIActorSpeedInput")
                 {
                     actorReach = float.Parse(inputFields[j].text);
@@ -212,7 +207,7 @@ public class UIManager : MonoBehaviour
             {
                 // Oppdaterer den eksisterende actoren, istedenfor å lage en ny en
                 UIActorProfiles[i].GetComponent<ActorProfileManager>().ConnectedActor.
-                    GetComponent<PlayerController>().InstantiateActor(actorName, actorHealth, actorInit, actorReach);
+                    GetComponent<PlayerController>().InstantiateActor(actorName, actorHealth, actorReach);
             }
             else
             {
@@ -225,7 +220,7 @@ public class UIManager : MonoBehaviour
                 */
                 int indexOfPrefabToSpawn = UIActorProfiles[i].GetComponentInChildren<TMPro.TMP_Dropdown>().value;
                 GameObject newActor = Instantiate(UIActorPrefab[indexOfPrefabToSpawn], pos, new Quaternion(0, 0, 0, 0));
-                newActor.GetComponent<PlayerController>().InstantiateActor(actorName, actorHealth, actorInit, actorReach);
+                newActor.GetComponent<PlayerController>().InstantiateActor(actorName, actorHealth, actorReach);
                 UIActorProfiles[i].GetComponent<ActorProfileManager>().ConnectedActor = newActor;
             }
 

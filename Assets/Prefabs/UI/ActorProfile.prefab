@@ -325,6 +325,10 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Knight
       m_Image: {fileID: 0}
+    - m_Text: Troll
+      m_Image: {fileID: 0}
+    - m_Text: Paladin
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -1442,7 +1446,6 @@ MonoBehaviour:
   DeselectedColor: {r: 65, g: 65, b: 65, a: 255}
   ActorNameText: {fileID: 0}
   ActorClassText: {fileID: 0}
-  ActorStageIDText: {fileID: 0}
 --- !u!1 &6715545834353844474
 GameObject:
   m_ObjectHideFlags: 0

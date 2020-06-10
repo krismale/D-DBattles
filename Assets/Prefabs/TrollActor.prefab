@@ -5994,7 +5994,7 @@ GameObject:
   - component: {fileID: 1410964608163152955}
   - component: {fileID: 1410964608163152948}
   m_Layer: 8
-  m_Name: troll_
+  m_Name: TrollActor
   m_TagString: Actor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6077,7 +6077,7 @@ NavMeshAgent:
   m_Acceleration: 30
   avoidancePriority: 50
   m_AngularSpeed: 800
-  m_StoppingDistance: 0.5
+  m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 0
   m_AutoRepath: 1
@@ -6103,7 +6103,6 @@ MonoBehaviour:
   ActorDistance: 30
   ActorMaxDistance: 30
   ActorName: NoName3
-  Stage: 0
   ClassID: 4
 --- !u!1 &1410964608163152953
 GameObject:
