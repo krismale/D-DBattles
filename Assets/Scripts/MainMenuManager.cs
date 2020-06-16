@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class MainMenuManager : MonoBehaviour
 {
     public int CragmawHideoutID;
+    public int RedbrandHideoutID;
     public void OpenCragmawHideout()
     {
         SceneManager.LoadScene(CragmawHideoutID);
@@ -14,5 +15,10 @@ public class MainMenuManager : MonoBehaviour
     public void CloseGame()
     {
         Application.Quit();
+    }
+
+    public void OpenRedbrandHideout()
+    {
+        SceneManager.LoadScene(RedbrandHideoutID);
     }
 }

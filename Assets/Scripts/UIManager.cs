@@ -13,10 +13,11 @@ public class UIManager : MonoBehaviour
     private TMPro.TextMeshProUGUI UIActorName;
     private TMPro.TextMeshProUGUI UIActorHealth;
     private TMPro.TextMeshProUGUI UIActorReach;
+    public GameObject UIActorOptions;
 
     private TMPro.TextMeshProUGUI UITargetName;
     private TMPro.TextMeshProUGUI UITargetHealth;
-    private Slider UITargetHealthSlider;
+    public TMPro.TMP_InputField UITargetHealthModifierInput;
     private TMPro.TextMeshProUGUI UITargetDistance;
 
     private PlayerController TargetActorController;
@@ -30,6 +31,8 @@ public class UIManager : MonoBehaviour
     public GameObject UIActorProfilePrefab; // Reference to the CreateActorProfile Prefab.
     public GameObject[] UIActorPrefab; // Reference to the Prefab for the different classes.
     public Sprite[] UIActorProfileImage; // De ulike profilbildene. Byttes ut basert på hvilken klasse som velges
+
+    public Vector3 PlaceActorPos;
     // Slutt på CreateActorMode UI elementer
 
     // Start på PlaceActorMode UI elementer
@@ -82,8 +85,6 @@ public class UIManager : MonoBehaviour
 
         UITargetName = GameObject.FindGameObjectWithTag("UITargetName").GetComponent<TMPro.TextMeshProUGUI>();
         UITargetHealth = GameObject.FindGameObjectWithTag("UITargetHealth").GetComponent<TMPro.TextMeshProUGUI>();
-        UITargetHealthSlider = GameObject.FindGameObjectWithTag("UITargetSlider").GetComponent<Slider>();
-        UITargetHealthSlider.onValueChanged.AddListener(EditTargetHealth); // Sørger for at slideren påvirker livet til target
         UITargetDistance = GameObject.FindGameObjectWithTag("UITargetDistance").GetComponent<TMPro.TextMeshProUGUI>();
 
         EnablePlayModeUI(false);
@@ -128,16 +129,14 @@ public class UIManager : MonoBehaviour
 
     public void SetUITargetHealth(PlayerController targetActor)
     {
-        if(targetActor)
+        if(!targetActor)
         {
-            UITargetHealthSlider.enabled = true;
-            UITargetHealthSlider.maxValue = targetActor.ActorMaxHealth;
-            UITargetHealthSlider.value = targetActor.ActorHealth;
-            UITargetHealth.text = UITargetHealthSlider.value.ToString();
+            UITargetHealthModifierInput.enabled = false;
+            UITargetHealth.text = "N/A";   
         } else
         {
-            UITargetHealthSlider.enabled = false;
-            UITargetHealth.text = "N/A";
+            UITargetHealthModifierInput.enabled = true;
+            UITargetHealth.text = targetActor.ActorHealth.ToString();
         }
         
     }
@@ -154,20 +153,6 @@ public class UIManager : MonoBehaviour
         
     }
 
-    public void EditTargetHealth(float newHealth)
-    {
-        if(TargetActorController)
-        {
-            UITargetHealth.text = newHealth.ToString();
-            TargetActorController.ActorHealth = (int)Mathf.Round(newHealth);
-
-            if (newHealth == 0)
-            {
-                UITargetName.text = "Target: " + TargetActorController.ActorName + " (Dead)";
-            }
-        }
-    }
-
     public void CreateNewActorProfile()
     {
         GameObject newProfile = Instantiate(UIActorProfilePrefab, UIActorListGrid.transform);
@@ -178,7 +163,7 @@ public class UIManager : MonoBehaviour
     public void CreateNewActors()
     {
         UIActorProfiles = GameObject.FindGameObjectsWithTag("UIActorProfile");
-        Vector3 pos = new Vector3(28, 2.09f, 35.12f);
+        Vector3 pos = PlaceActorPos; // Cragmaw: new Vector3(28, 2.09f, 35.12f);
         for (int i = 0; i < UIActorProfiles.Length; ++i)
         {
             
@@ -387,5 +372,42 @@ public class UIManager : MonoBehaviour
         value = Mathf.Round(value);
         value /= 10;
         return value;
+    }
+    public void HealTarget()
+    {
+        if (TargetActorController && UITargetHealthModifierInput.text.Length > 0)
+        {
+            TargetActorController.ActorHealth += int.Parse(UITargetHealthModifierInput.text);
+            UITargetHealth.text = TargetActorController.ActorHealth.ToString();
+        }
+
+        
+    }
+    public void DamageTarget()
+    {
+        if (TargetActorController && UITargetHealthModifierInput.text.Length > 0)
+        {
+            TargetActorController.ActorHealth -= int.Parse(UITargetHealthModifierInput.text);
+
+            UITargetHealth.text = TargetActorController.ActorHealth.ToString();
+
+            if (TargetActorController.ActorHealth <= 0)
+            {
+                UITargetName.text = "Target: " + TargetActorController.ActorName + " (Dead)";
+            }
+        }
+    }
+
+    public void ToggleUIActorOptions()
+    {
+        if(UIActorOptions.activeInHierarchy)
+        {
+            Debug.Log("Goodbye");
+            UIActorOptions.SetActive(false);
+        } else
+        {
+            Debug.Log("Hello");
+            UIActorOptions.SetActive(true);
+        }
     }
 }

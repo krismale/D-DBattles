@@ -17,7 +17,8 @@ public class PlayerController : MonoBehaviour
 
     private Animator anim;
     private NavMeshAgent agent;
-    private ParticleSystem ActivePlayerHighlighter;
+    public ParticleSystem ActivePlayerHighlighter;
+    public GameObject TorchObject;
 
     public int ClassID; // Brukes til å finne riktig prefab når man skal lage en ny Actor
 
@@ -31,7 +32,6 @@ public class PlayerController : MonoBehaviour
         TurnManager = GameObject.FindGameObjectWithTag("TurnManager").GetComponent<TurnManager>();
         UIManager = GameObject.FindGameObjectWithTag("UICanvas").GetComponent<UIManager>();
         MouseManager = GameObject.FindGameObjectWithTag("MouseManager").GetComponent<MouseManager>();
-        ActivePlayerHighlighter = gameObject.GetComponentInChildren<ParticleSystem>();
 
         ActorHealth = ActorMaxHealth; // Gir ActorHealth maksverdien av det livet karakteren har
         ResetActorDistance();

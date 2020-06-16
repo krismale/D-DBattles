@@ -114,4 +114,13 @@ public class TurnManager : MonoBehaviour
             MouseManager.targetToMove = null;
         }
     }
+
+    // Skrur av eller på torchen til den spilleren som det er sin tur
+    public void EnableActivePlayerTorch(bool enable)
+    {
+        if(MouseManager.targetToMove)
+        {
+            MouseManager.targetToMove.GetComponent<PlayerController>().TorchObject.SetActive(enable);
+        }
+    }
 }
